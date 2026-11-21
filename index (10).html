@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>علّمني | Learnly</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1d2433;--mut:#6b7280;--line:#e4e2da;--ac:#0f766e;--acs:#d9f0ec;--on-ac:#fff;--field:#faf9f6;--bad:#b3261e;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12161c;--card:#1a2029;--ink:#e8ebf0;--mut:#98a2b3;--line:#2a3341;--ac:#3dd6c3;--acs:#153a37;--on-ac:#06201d;--field:#151b23;--bad:#f2867f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12161c;--card:#1a2029;--ink:#e8ebf0;--mut:#98a2b3;--line:#2a3341;--ac:#3dd6c3;--acs:#153a37;--on-ac:#06201d;--field:#151b23;--bad:#f2867f;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);line-height:1.7;font-family:Cairo,system-ui,sans-serif}
+main{max-width:920px;margin:0 auto;padding:16px}
+h1{font-size:26px;line-height:1.4;margin:.3em 0}h2{font-size:18px;margin:.4em 0}
+a{color:var(--ac)}.muted{color:var(--mut);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px;display:block}
+a.card{color:inherit;text-decoration:none}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);padding:10px 14px;border-radius:12px;margin-bottom:20px}
+button,.btn{font:inherit;font-size:14px;background:var(--ac);color:var(--on-ac);border:1px solid var(--ac);border-radius:8px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-block}
+button.ghost,.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+input,textarea,select{font:inherit;width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--field);color:var(--ink)}
+label{display:block;font-size:13px;margin:0 0 4px;color:var(--mut)}
+.nav a{text-decoration:none;font-size:14px;padding:4px 10px;border-radius:8px;color:var(--mut)}
+.nav a.on{background:var(--acs);color:var(--ac);font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.pill{font-size:12px;padding:3px 10px;border-radius:20px;font-weight:700;background:var(--field);color:var(--mut)}
+.pill.ok{background:var(--acs);color:var(--ac)}
+.msg{white-space:pre-wrap;background:var(--field);border:1px dashed var(--line);border-radius:8px;padding:12px;font-size:14px;margin:12px 0}
+.crit{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.crit input{width:70px}
+.score{font-size:24px;font-weight:700;color:var(--ac)}
+.srow{display:grid;grid-template-columns:1.4fr 1fr 1fr auto auto;gap:6px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line)}.srow input{padding:5px 8px;font-size:13px}@media(max-width:640px){.srow{grid-template-columns:1fr 1fr}.srow>span:first-child{grid-column:1/-1}}.flash{background:var(--acs);color:var(--ac);font-weight:600}.opt{display:flex;gap:8px;align-items:center;margin:6px 0}.opt input[type=radio]{width:auto;accent-color:var(--ac)}.opt input:not([type=radio]){flex:1}.q{border-top:1px dashed var(--line);padding:10px 0}.ok{color:var(--ac);font-weight:700}.no{color:var(--bad);font-weight:700}.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:680px}th,td{padding:6px;border-bottom:1px dashed var(--line);text-align:start;font-size:13px}th{color:var(--mut)}td input{padding:5px 8px;font-size:13px;min-width:100px}.banner{font-size:12px;color:var(--mut);text-align:center;margin-top:24px}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const EX="امتحان الكهرباء التيارية – الباب الأول",GR="ثالث ثانوي – مجموعة السبت";
+const D=()=>({n:10,me:null,
+users:[{id:1,role:"admin",name:"الأدمن",u:"admin",p:"admin123"},
+{id:2,role:"teacher",name:"أ/ أحمد (فيزياء)",u:"ahmed",p:"1234",on:true},
+{id:3,role:"student",name:"يوسف أحمد طه",u:"yousef",p:"1111",owner:2,gid:1,phone:"01011112222",pp:"01019283746"},
+{id:4,role:"student",name:"مريم محمود علي",u:"mariam",p:"2222",owner:2,gid:1,phone:"01233334444",pp:"01122334455"}],
+groups:[{id:1,owner:2,name:"مجموعة 1",year:"ثالث ثانوي",day:"السبت",time:"17:00"}],
+exams:[{id:1,owner:2,title:EX,gid:1,mins:30,qs:[
+{id:1,type:"mcq",text:"وحدة قياس شدة التيار الكهربي هي:",max:2,opts:["أمبير","فولت","أوم","وات"],ans:0},
+{id:2,type:"mcq",text:"القانون الصحيح لقانون أوم هو:",max:2,opts:["I = V × R","I = V / R","V = I / R","R = V × I"],ans:1},
+{id:3,type:"text",text:"وصلت مقاومة 10 أوم ببطارية 20 فولت، احسب شدة التيار مع ذكر القانون والوحدة.",max:6,model:"I = V / R = 20 / 10 = 2 أمبير"}]}],
+subs:[{id:1,owner:2,eid:1,sid:4,ans:{1:0,2:1,3:"I = V / R = 20 / 10 = 2 أمبير"},note:"",done:true,graded:true,marks:{3:6}}]});
+let S;try{S=JSON.parse(localStorage.getItem("lrn6"))}catch(e){}if(!S||!S.subs)S=D();
+let FL="",PEND=0;
+const save=()=>{try{localStorage.setItem("lrn6",JSON.stringify(S))}catch(e){}};
+const me=()=>S.users.find(x=>x.id===S.me);
+const taken=(u,id)=>S.users.some(x=>x.u.toLowerCase()===u.toLowerCase()&&x.id!==id);
+const $=id=>document.getElementById(id);
+function waLink(phone,text){let d=String(phone||"").replace(/\D/g,"");if(d.startsWith("0"))d="2"+d;return d?"https://wa.me/"+d+"?text="+encodeURIComponent(text):null}
+function buildMsg(r){const pct=Math.round(r.score/r.max*100);return`السلام عليكم ورحمة الله، ولي أمر الطالب ${r.name} 🌟\nنتيجة امتحان "${r.exam}": ${r.score} / ${r.max} (${pct}%)${r.note?`\nملاحظات: ${r.note}`:""}\nمع تحياتي، أ/ المدرس`}
+const nz=s=>String(s||"").toLowerCase().replace(/[\u064B-\u0652\u0640]/g,"").replace(/[أإآ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+const near=(a,b)=>{if(a===b)return true;if(a.length<4||b.length<4||Math.abs(a.length-b.length)>1)return false;let i=0,j=0,e=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){i++;j++}else{if(++e>1)return false;if(a.length>b.length)i++;else if(a.length<b.length)j++;else{i++;j++}}}return e+(a.length-i)+(b.length-j)<=1};
+const TH=0.6;
+const sim=(m,a)=>{const mw=nz(m).split(" ").filter(Boolean),aw=nz(a).split(" ").filter(Boolean);return mw.length?mw.filter(w=>aw.some(x=>near(w,x))).length/mw.length:0};
+const sc=(e,s)=>{let t=0,m=0;e.qs.forEach(q=>{m+=q.max;t+=q.type==="mcq"?(s.ans[q.id]===q.ans?q.max:0):(Number(s.marks[q.id])||0)});return[t,m]};
+const hasText=e=>e.qs.some(q=>q.type==="text");
+const pendN=m=>S.subs.filter(s=>s.owner===m.id&&s.done&&!s.graded).length;
+const DAYS=["السبت","الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة"];
+const fmtT=t=>{if(!t)return"";const[h,m]=t.split(":").map(Number);return((h%12)||12)+":"+String(m).padStart(2,"0")+" "+(h>=12?"م":"ص")};
+const rowHTML=()=>`<tr><td><input class="sn" aria-label="اسم الطالب"></td><td><input class="sp" dir="ltr" aria-label="رقم الطالب"></td><td><input class="sq" dir="ltr" aria-label="رقم ولي الأمر"></td><td><input class="su" dir="ltr" aria-label="اليوزر"></td><td><input class="sw" dir="ltr" aria-label="الباسورد"></td><td><button class="ghost" onclick="this.closest('tr').remove()">حذف</button></td></tr>`;
+const L=i=>"ABCD"[i];
+let TAKE=0,TM=0;
+function rep(s){const e=S.exams.find(x=>x.id===s.eid),st=S.users.find(x=>x.id===s.sid);if(!e||!st)return null;const[t,m]=sc(e,s),g=S.groups.find(x=>x.id===e.gid);return{name:st.name,group:g?g.name:"—",exam:e.title,score:t,max:m,note:s.note,phone:st.pp}}
+function setTheme(){const r=document.documentElement,c=r.getAttribute("data-theme");const dark=c?c==="dark":matchMedia("(prefers-color-scheme: dark)").matches;r.setAttribute("data-theme",dark?"light":"dark")}
+const PG={admin:["teachers"],teacher:["groups","exams","correction","reports"],student:["me"]};
+const LB={teachers:"المدرسين",groups:"المجموعات",exams:"الامتحانات",correction:"تصحيح المقالي",reports:"التقارير",me:"امتحاناتي"};
+const ROLE={admin:"أدمن",teacher:"مدرس",student:"طالب"};
+const logo=s=>`<svg width="${s}" height="${s}" viewBox="0 0 64 64" role="img" aria-label="علّمني"><circle cx="32" cy="32" r="28" fill="none" stroke="var(--ac)" stroke-width="6"/><path d="M32 4a28 28 0 0 1 0 56z" fill="var(--ac)"/></svg>`;
+const note=`<p class="banner">نسخة تجريبية: اليوزرات والباسوردات بتتخزن في متصفحك بس، وده مش آمن للاستخدام الحقيقي.</p>`;
+function nav(p,m){return`<div class="topbar"><div class="row nav"><a href="#" style="font-weight:700;color:var(--ac);margin-inline-end:8px">◐ علّمني</a>${PG[m.role].map(k=>`<a href="#${k}" class="${p===k?"on":""}">${LB[k]}${k==="correction"&&pendN(m)?` (${pendN(m)})`:""}</a>`).join("")}</div><div class="row"><span class="muted">${esc(m.name)} (${ROLE[m.role]})</span><button class="ghost" onclick="setTheme()" style="font-size:13px;padding:6px 12px">الوضع الليلي</button><button class="ghost" onclick="logout()" style="font-size:13px;padding:6px 12px">تسجيل الخروج</button></div></div>`}
+const inp=(id,v,l)=>`<div><label for="${id}">${l}</label><input id="${id}" value="${esc(v)}" dir="ltr"></div>`;
+const V={
+home(m){return`<div class="row" style="justify-content:flex-end"><button class="ghost" onclick="setTheme()" style="font-size:13px">الوضع الليلي</button></div><div style="text-align:center;padding:40px 0 16px">${logo(88)}<h1 style="font-size:34px;margin-top:16px">مرحباً بك في منصة علّمني</h1><p class="muted" style="font-size:16px;max-width:520px;margin:8px auto 24px">سجّل دخولك بالبيانات اللي اتسجلت لك من الإدارة أو من مدرسك، وابدأ.</p>
+${m?`<div class="card" style="border:2px solid var(--ac);text-align:start"><strong>أهلاً ${esc(m.name)} 👋</strong><div class="muted" style="margin:4px 0 14px">داخل كـ ${ROLE[m.role]} • ${esc(m.u)}</div><div class="grid">${PG[m.role].map(k=>`<a class="card" style="margin:0" href="#${k}"><strong>${LB[k]}</strong></a>`).join("")}</div></div>`:`<a class="btn" href="#login" style="font-size:16px;padding:12px 28px">تسجيل الدخول ←</a>`}</div>${note}`},
+login(){return`<div style="max-width:420px;margin:40px auto" class="card"><div style="text-align:center">${logo(48)}</div><h1 style="font-size:22px;text-align:center">تسجيل الدخول</h1>
+<label for="lu">اليوزر</label><input id="lu" dir="ltr" autocomplete="username"><label for="lp" style="margin-top:10px">الباسورد</label><input id="lp" type="password" dir="ltr" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+<button style="width:100%;margin-top:14px" onclick="doLogin()">دخول</button>
+<details style="margin-top:14px"><summary class="muted" style="cursor:pointer">حسابات التجربة</summary><div class="msg muted" dir="ltr" style="text-align:left;margin-bottom:0">admin / admin123\nahmed / 1234  (teacher)\nyousef / 1111  (student)\nmariam / 2222  (student)</div></details></div>${note}`},
+teachers(){const ts=S.users.filter(x=>x.role==="teacher");return`<h1 style="font-size:24px">إدارة المدرسين</h1><p class="muted">انت الأدمن: تضيف مدرس بيوزر وباسورد، وتعدلهم أو توقف الحساب في أي وقت.</p>
+<div class="card"><h2 style="font-size:16px">+ إضافة مدرس</h2><div class="grid"><div><label for="tn">الاسم</label><input id="tn"></div>${inp("tu","","اليوزر")}${inp("tp","","الباسورد")}</div><button style="margin-top:10px" onclick="addTeacher()">إضافة المدرس</button></div>
+<h2>المدرسين (${ts.length})</h2>${ts.map(t=>`<div class="card"><div class="row between"><strong>${esc(t.name)}</strong><span class="pill ${t.on?"ok":""}">${t.on?"فعّال":"موقوف"}</span></div><div class="muted">${S.users.filter(x=>x.owner===t.id).length} طالب • ${S.groups.filter(g=>g.owner===t.id).length} مجموعة</div>
+<div class="grid" style="margin:8px 0">${inp("tu"+t.id,t.u,"اليوزر")}${inp("tp"+t.id,t.p,"الباسورد")}</div><div class="row"><button onclick="saveCred(${t.id},'t')">حفظ</button><button class="ghost" onclick="toggleT(${t.id})">${t.on?"إيقاف الحساب":"تفعيل الحساب"}</button><button class="ghost" onclick="delUser(${t.id})">${PEND===t.id?"تأكيد الحذف؟":"حذف"}</button></div></div>`).join("")||'<div class="card">لسه مفيش مدرسين. ضيف أول مدرس من فوق.</div>'}`},
+groups(m){const gs=S.groups.filter(g=>g.owner===m.id);const TH_="<thead><tr><th>الاسم</th><th>رقم الطالب</th><th>رقم ولي الأمر</th><th>اليوزر</th><th>الباسورد</th><th></th></tr></thead>";return`<h1 style="font-size:24px">المجموعات</h1>
+<div class="card"><h2 style="font-size:16px">+ إنشاء مجموعة جديدة</h2>
+<div class="grid"><div><label for="gn">اسم أو رقم المجموعة</label><input id="gn" placeholder="مثال: مجموعة 3"></div><div><label for="gy">السنة الدراسية</label><input id="gy" placeholder="مثال: ثالث ثانوي"></div><div><label for="gd">اليوم</label><select id="gd">${DAYS.map(d=>`<option>${d}</option>`).join("")}</select></div><div><label for="gt">الساعة</label><input id="gt" type="time" value="17:00"></div></div>
+<h2 style="font-size:15px;margin-top:14px">بيانات الطلاب</h2><div class="tw"><table>${TH_}<tbody id="gb">${rowHTML()+rowHTML()+rowHTML()}</tbody></table></div>
+<p class="muted">اليوزر والباسورد لو سبتهم فاضيين بيتعملوا تلقائي.</p><div id="gerr" class="no" role="alert"></div>
+<div class="row"><button class="ghost" onclick="addRow()">+ إضافة طالب</button><button onclick="addGroup()">إنشاء المجموعة</button></div></div>
+<h2>مجموعاتك (${gs.length})</h2>${gs.map(g=>{const st=S.users.filter(x=>x.role==="student"&&x.gid===g.id);return`<div class="card"><div class="row between"><strong>${esc(g.name)}</strong><span class="muted">${esc(g.year)} • ${esc(g.day)} • ${fmtT(g.time)} • ${st.length} طالب</span></div>
+<div class="tw"><table>${TH_}<tbody>${st.map(s=>`<tr><td>${esc(s.name)}</td><td dir="ltr">${esc(s.phone)}</td><td dir="ltr">${esc(s.pp)}</td><td><input id="su${s.id}" value="${esc(s.u)}" dir="ltr" aria-label="يوزر ${esc(s.name)}"></td><td><input id="sp${s.id}" value="${esc(s.p)}" dir="ltr" aria-label="باسورد ${esc(s.name)}"></td><td><div class="row" style="flex-wrap:nowrap"><button class="ghost" onclick="saveCred(${s.id},'s')">حفظ</button><button class="ghost" onclick="delUser(${s.id})">${PEND===s.id?"تأكيد؟":"حذف"}</button></div></td></tr>`).join("")}
+<tr><td><input id="an${g.id}" placeholder="+ طالب جديد" aria-label="اسم طالب جديد"></td><td><input id="ap${g.id}" dir="ltr" aria-label="رقم الطالب"></td><td><input id="aq${g.id}" dir="ltr" aria-label="رقم ولي الأمر"></td><td><input id="au${g.id}" dir="ltr" aria-label="اليوزر"></td><td><input id="aw${g.id}" dir="ltr" aria-label="الباسورد"></td><td><button onclick="addStudent(${g.id})">إضافة</button></td></tr></tbody></table></div></div>`}).join("")}`},
+exams(m){const gs=S.groups.filter(g=>g.owner===m.id),es=S.exams.filter(e=>e.owner===m.id);return`<h1 style="font-size:24px">بنك الامتحانات</h1>
+<div class="card"><h2 style="font-size:16px">+ إنشاء امتحان جديد</h2><label for="et">عنوان الامتحان</label><input id="et" placeholder="مثال: ${EX}">
+<label for="eg" style="margin-top:10px">المجموعة</label><select id="eg">${gs.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join("")}</select>
+<label for="em" style="margin-top:10px">مدة الامتحان (بالدقايق)</label><input id="em" type="number" min="1" value="30"><button style="margin-top:10px" onclick="addExam()">إنشاء الامتحان</button></div>
+<h2>امتحاناتك (${es.length})</h2>${es.map(e=>{const g=S.groups.find(x=>x.id===e.gid);return`<div class="card"><div class="row between"><strong style="font-size:17px">${esc(e.title)}</strong><button class="ghost" onclick="delExam(${e.id})">${PEND===e.id?"تأكيد الحذف؟":"حذف الامتحان"}</button></div>
+<div class="muted">${g?esc(g.name):"—"} • ${e.qs.length} سؤال • ${e.qs.reduce((a,q)=>a+q.max,0)} درجة • ${e.mins} دقيقة • ${S.subs.filter(s=>s.eid===e.id).length} تسليم</div>
+${e.qs.map((q,i)=>`<div class="q"><div class="row between"><strong>${i+1}. ${esc(q.text)} <span class="muted">(${q.max} درجة • ${q.type==="mcq"?"اختياري":"مقالي"})</span></strong><button class="ghost" onclick="delQ(${e.id},${q.id})">حذف</button></div>${q.type==="mcq"?q.opts.map((o,j)=>`<div class="${j===q.ans?"ok":""}">${L(j)}) ${esc(o)}${j===q.ans?" ✓ الإجابة الصحيحة":""}</div>`).join(""):(q.model?`<div class="ok">الإجابة النموذجية: ${esc(q.model)}</div>`:"")}</div>`).join("")}
+<div class="q"><strong>+ إضافة سؤال</strong><div class="grid" style="margin:8px 0"><div><label for="qt${e.id}">نوع السؤال</label><select id="qt${e.id}" onchange="tgl(${e.id})"><option value="mcq">اختياري (A B C D)</option><option value="text">سؤال مقالي</option></select></div><div><label for="qm${e.id}">الدرجة</label><input id="qm${e.id}" type="number" min="0.5" step="0.5" value="1"></div></div>
+<label for="qx${e.id}">نص السؤال</label><textarea id="qx${e.id}" rows="2"></textarea>
+<div id="qo${e.id}" style="margin-top:8px"><div class="muted">اكتب الاختيارات، واختار الإجابة الصحيحة بالدايرة:</div>${[0,1,2,3].map(j=>`<div class="opt"><input type="radio" name="qc${e.id}" value="${j}" ${j===0?"checked":""} aria-label="الإجابة الصحيحة ${L(j)}"><span>${L(j)}</span><input id="qa${e.id}_${j}" placeholder="الاختيار ${L(j)}"></div>`).join("")}</div>
+<div id="qe${e.id}" style="display:none;margin-top:8px"><label for="qd${e.id}">الإجابة النموذجية (اختياري، مرجع ليك وقت التصحيح)</label><textarea id="qd${e.id}" rows="2"></textarea></div><button style="margin-top:8px" onclick="addQ(${e.id})">إضافة السؤال</button></div></div>`}).join("")}`},
+correction(m){const ps=S.subs.filter(s=>s.owner===m.id&&s.done&&!s.graded);return`<h1 style="font-size:24px">تصحيح الأسئلة المقالية</h1><p class="muted">كل ورقة فيها أسئلة مقالية بتظهر هنا. حط درجة كل سؤال واعتمد، وساعتها بس الدرجة بتظهر للطالب.</p>
+${ps.map(s=>{const e=S.exams.find(x=>x.id===s.eid),st=S.users.find(x=>x.id===s.sid);if(!e||!st)return"";const mc=e.qs.filter(q=>q.type==="mcq"),au=mc.reduce((a,q)=>a+(s.ans[q.id]===q.ans?q.max:0),0),am=mc.reduce((a,q)=>a+q.max,0);
+return`<div class="card"><div class="row between"><div><strong>${esc(st.name)}</strong> ${s.reason?`<span class="pill no">${s.reason==="time"?"انتهى الوقت":"خرج من الامتحان"}</span>`:""}<div class="muted">${esc(e.title)}</div></div><span class="muted">الاختياري (تلقائي): ${au} / ${am}</span></div>
+${e.qs.filter(q=>q.type==="text").map(q=>{const a=s.ans[q.id];return`<div class="q"><strong>${esc(q.text)}</strong><div class="msg" style="margin:6px 0">${esc(a||"لم يجب")}</div>${q.model?`<div class="muted">الإجابة النموذجية: ${esc(q.model)} • تشابه: ${Math.round(sim(q.model,a)*100)}%</div>`:""}<div class="row" style="margin-top:6px"><label for="mk${s.id}_${q.id}" style="margin:0">الدرجة</label><input id="mk${s.id}_${q.id}" type="number" min="0" max="${q.max}" step="0.5" value="${s.marks[q.id]??0}" style="width:80px" onchange="setMark(${s.id},${q.id},this.value)"><span class="muted">/ ${q.max}</span></div></div>`}).join("")}
+<label for="nt${s.id}" style="margin-top:10px">ملاحظة لولي الأمر (اختياري)</label><input id="nt${s.id}" value="${esc(s.note||"")}" onchange="setNote(${s.id},this.value)"><button style="margin-top:10px" onclick="approve(${s.id})">اعتماد الدرجة وإظهارها للطالب</button></div>`}).join("")||'<div class="card">مفيش أوراق مستنية التصحيح.</div>'}`},
+reports(m){const rs=S.subs.filter(s=>s.owner===m.id&&s.done&&s.graded&&rep(s));return`<h1 style="font-size:24px">تقارير أولياء الأمور</h1><p class="muted">رسائل واتساب جاهزة لكل ورقة اتصححت.</p>
+${rs.map(s=>{const r=rep(s),t=buildMsg(r),l=waLink(r.phone,t),p=Math.round(r.score/r.max*100);return`<div class="card"><div class="row between"><div><strong style="font-size:17px">${esc(r.name)}</strong><div class="muted">${esc(r.group)} • ${esc(r.exam)}</div></div><div style="text-align:center"><div class="score">${r.score} <span class="muted" style="font-size:14px">/ ${r.max}</span></div><span class="muted">${p}%</span></div></div>
+<div class="msg">${esc(t)}</div><div class="row">${l?`<a class="btn" href="${l}" target="_blank" rel="noopener">إرسال على واتساب</a>`:`<span class="muted">مفيش رقم لولي الأمر</span>`}<button class="ghost" onclick="copyMsg(${s.id},this)">نسخ الرسالة</button></div></div>`}).join("")||'<div class="card">لسه مفيش أوراق اتصححت.</div>'}`},
+me(m){if(TAKE){const e=S.exams.find(x=>x.id===TAKE);if(e)return`<div class="card" style="position:sticky;top:env(safe-area-inset-top,0px);z-index:5;display:flex;justify-content:space-between;align-items:center;gap:10px"><strong>${esc(e.title)}</strong><span class="score" id="tm" role="timer">--:--</span></div>
+<p class="muted">متخرجش من الصفحة ولا تبدّل التبويب: لو خرجت الامتحان بيتقفل وبيتسلّم تلقائي ومش هتقدر ترجع له.</p>
+<div oninput="collect()" onchange="collect()">${e.qs.map((q,i)=>`<div class="card"><strong>${i+1}. ${esc(q.text)}</strong> <span class="muted">(${q.max} درجة)</span>${q.type==="mcq"?q.opts.map((o,j)=>`<div class="opt"><input type="radio" name="a${q.id}" id="a${q.id}_${j}" value="${j}"><label for="a${q.id}_${j}" style="margin:0;color:var(--ink)">${L(j)}) ${esc(o)}</label></div>`).join(""):`<textarea id="a${q.id}" rows="3" style="margin-top:8px"></textarea>`}</div>`).join("")}</div><button onclick="finishExam('submit')">تسليم الامتحان</button>`}
+const es=S.exams.filter(e=>e.gid===m.gid&&e.qs.length);return`<h1 style="font-size:24px">امتحاناتي ونتايجي</h1><p class="muted">أهلاً ${esc(m.name)}.</p>
+${es.map(e=>{const s=S.subs.find(x=>x.eid===e.id&&x.sid===m.id),mx=e.qs.reduce((a,q)=>a+q.max,0);
+if(!s)return`<div class="card"><div class="row between"><div><strong>${esc(e.title)}</strong><div class="muted">${e.qs.length} سؤال • ${mx} درجة • ${e.mins} دقيقة</div><div class="muted">بعد ما تبدأ مينفعش تخرج، ولو خرجت بيتقفل.</div></div><button onclick="startExam(${e.id})">${PEND===e.id?"تأكيد البدء؟":"ابدأ الامتحان"}</button></div></div>`;
+if(!s.graded)return`<div class="card"><div class="row between"><div><strong>${esc(e.title)}</strong> ${s.reason?`<span class="pill no">${s.reason==="time"?"انتهى الوقت":"خرجت من الامتحان"}</span>`:""}</div><span class="pill">تم التسليم • بانتظار تصحيح المدرس</span></div></div>`;
+const[t]=sc(e,s);return`<div class="card"><div class="row between"><div><strong>${esc(e.title)}</strong> ${s.reason?`<span class="pill no">${s.reason==="time"?"انتهى الوقت":"خرجت من الامتحان"}</span>`:""}<div class="muted">${Math.round(t/mx*100)}%</div></div><div class="score">${t} <span class="muted" style="font-size:14px">/ ${mx}</span></div></div>${s.note?`<div class="msg">${esc(s.note)}</div>`:""}
+<details><summary style="cursor:pointer;color:var(--ac)">مراجعة إجاباتك</summary>${e.qs.map((q,i)=>{const a=s.ans[q.id];return q.type==="mcq"?`<div class="q">${i+1}. ${esc(q.text)}<div>إجابتك: ${a>=0?L(a)+") "+esc(q.opts[a]):"لم تجب"} — <span class="${a===q.ans?"ok":"no"}">${a===q.ans?"✓ صح":`✗ غلط، الصح ${L(q.ans)}) ${esc(q.opts[q.ans])}`}</span></div></div>`:`<div class="q">${i+1}. ${esc(q.text)}<div class="msg" style="margin:6px 0">${esc(a||"لم تجب")}</div><span class="muted">درجتك: ${s.marks[q.id]??0} / ${q.max}</span>${q.model?`<div class="muted">الإجابة النموذجية: ${esc(q.model)}</div>`:""}</div>`}).join("")}</details></div>`}).join("")||'<div class="card">مفيش امتحانات متاحة لمجموعتك دلوقتي.</div>'}`}
+};
+function doLogin(){const u=$("lu").value.trim(),p=$("lp").value;const x=S.users.find(z=>z.u.toLowerCase()===u.toLowerCase()&&z.p===p);
+if(!x){FL="اليوزر أو الباسورد غلط. راجع الحروف وجرب تاني.";return render()}
+if(x.role==="teacher"&&!x.on){FL="الحساب ده موقوف. كلم الأدمن.";return render()}
+S.me=x.id;FL="";location.hash=PG[x.role][0];render()}
+function logout(){S.me=null;FL="";location.hash="";render()}
+function addTeacher(){const n=$("tn").value.trim(),u=$("tu").value.trim(),p=$("tp").value.trim();
+if(!n||!u||!p){FL="اكتب الاسم واليوزر والباسورد.";return render()}
+if(taken(u,0)){FL="اليوزر ده مستخدم. اختار يوزر تاني.";return render()}
+S.users.push({id:S.n++,role:"teacher",name:n,u,p,on:true});FL="تمت إضافة المدرس "+n;render()}
+function saveCred(id,pre){const u=$(pre+"u"+id).value.trim(),p=$(pre+"p"+id).value.trim();
+if(!u||!p){FL="اليوزر والباسورد مينفعش يبقوا فاضيين.";return render()}
+if(taken(u,id)){FL="اليوزر ده مستخدم. اختار يوزر تاني.";return render()}
+const x=S.users.find(z=>z.id===id);x.u=u;x.p=p;FL="تم حفظ بيانات "+x.name;render()}
+function toggleT(id){const x=S.users.find(z=>z.id===id);x.on=!x.on;FL=x.on?"تم تفعيل الحساب":"تم إيقاف الحساب";render()}
+function delUser(id){if(PEND!==id){PEND=id;FL="دوس حذف تاني للتأكيد.";return render()}PEND=0;
+const x=S.users.find(z=>z.id===id);const ids=S.users.filter(z=>z.id===id||z.owner===id).map(z=>z.id);
+S.users=S.users.filter(z=>!ids.includes(z.id));
+if(x.role==="teacher"){S.groups=S.groups.filter(g=>g.owner!==id);S.exams=S.exams.filter(e=>e.owner!==id);S.subs=S.subs.filter(r=>r.owner!==id)}else S.subs=S.subs.filter(r=>r.sid!==id);
+FL="تم الحذف";render()}
+function mkStudent(gid,n,p,q,u,w){if(u&&taken(u,0))return false;if(!u){u="s"+(1000+Math.floor(Math.random()*9000));if(taken(u,0))u+=S.n}
+S.users.push({id:S.n++,role:"student",name:n,phone:p,pp:q,u,p:w||String(1000+Math.floor(Math.random()*9000)),owner:me().id,gid});return true}
+function addRow(){$("gb").insertAdjacentHTML("beforeend",rowHTML())}
+function addGroup(){const n=$("gn").value.trim(),er=$("gerr");if(!n){er.textContent="اكتب اسم أو رقم المجموعة.";return}
+const g={id:S.n++,owner:me().id,name:n,year:$("gy").value.trim()||"—",day:$("gd").value,time:$("gt").value};S.groups.push(g);let ok=0,bad=0;
+document.querySelectorAll("#gb tr").forEach(tr=>{const v=c=>tr.querySelector("."+c).value.trim();if(!v("sn"))return;mkStudent(g.id,v("sn"),v("sp"),v("sq"),v("su"),v("sw"))?ok++:bad++});
+FL=`تم إنشاء المجموعة وإضافة ${ok} طالب`+(bad?` (${bad} اتخطوا لأن اليوزر مستخدم)`:"");render()}
+function addStudent(gid){const v=k=>$(k+gid).value.trim();if(!v("an")){FL="اكتب اسم الطالب.";return render()}
+FL=mkStudent(gid,v("an"),v("ap"),v("aq"),v("au"),v("aw"))?"تمت إضافة الطالب.":"اليوزر ده مستخدم. اختار يوزر تاني.";render()}
+function addExam(){const t=$("et").value.trim(),g=Number($("eg").value);if(!t){FL="اكتب عنوان الامتحان.";return render()}
+if(!g){FL="اعمل مجموعة الأول من صفحة المجموعات.";return render()}
+S.exams.unshift({id:S.n++,owner:me().id,title:t,gid:g,mins:Math.max(1,Number($("em").value)||30),qs:[]});FL="تم إنشاء الامتحان، ضيف الأسئلة تحته.";render()}
+function tgl(id){const m=$("qt"+id).value==="mcq";$("qo"+id).style.display=m?"":"none";$("qe"+id).style.display=m?"none":""}
+function addQ(eid){const e=S.exams.find(x=>x.id===eid),type=$("qt"+eid).value,text=$("qx"+eid).value.trim(),max=Number($("qm"+eid).value)||1;
+if(!text){FL="اكتب نص السؤال.";return render()}
+const q={id:S.n++,type,text,max};
+if(type==="mcq"){q.opts=[0,1,2,3].map(j=>$(`qa${eid}_${j}`).value.trim());if(q.opts.some(o=>!o)){FL="اكتب الاختيارات الأربعة A و B و C و D.";return render()}
+q.ans=Number(document.querySelector(`input[name="qc${eid}"]:checked`).value)}
+if(type==="text")q.model=$("qd"+eid).value.trim();e.qs.push(q);FL="تمت إضافة السؤال.";render()}
+function delQ(eid,qid){const e=S.exams.find(x=>x.id===eid);e.qs=e.qs.filter(q=>q.id!==qid);render()}
+function delExam(id){if(PEND!==id){PEND=id;FL="دوس حذف تاني للتأكيد.";return render()}PEND=0;S.exams=S.exams.filter(e=>e.id!==id);S.subs=S.subs.filter(s=>s.eid!==id);FL="تم حذف الامتحان.";render()}
+function startExam(eid){const e=S.exams.find(x=>x.id===eid);if(PEND!==eid){PEND=eid;FL=`مدة الامتحان ${e.mins} دقيقة. لو خرجت منه بيتقفل ومش هتقدر ترجع له. دوس تاني لو جاهز.`;return render()}
+PEND=0;S.subs.push({id:S.n++,owner:e.owner,eid,sid:me().id,ans:{},marks:{},note:"",start:Date.now(),done:false,graded:false});TAKE=eid;FL="";render()}
+function collect(){const s=S.subs.find(x=>x.eid===TAKE&&!x.done),e=S.exams.find(x=>x.id===TAKE);if(!s||!e)return;
+e.qs.forEach(q=>{if(q.type==="mcq"){const c=document.querySelector(`input[name="a${q.id}"]:checked`);s.ans[q.id]=c?Number(c.value):-1}else{const t=$("a"+q.id);if(t)s.ans[q.id]=t.value.trim()}});save()}
+function fin(s,reason){const e=S.exams.find(x=>x.id===s.eid);s.done=true;s.reason=reason;s.graded=!e||!hasText(e)}
+function finishExam(reason){const s=S.subs.find(x=>x.eid===TAKE&&!x.done);if(!s)return;collect();fin(s,reason==="submit"?"":reason);TAKE=0;clearInterval(TM);
+FL=(reason==="time"?"انتهى الوقت وتم تسليم إجاباتك.":reason==="left"?"خرجت من الامتحان فاتقفل، ومينفعش ترجع له.":"تم تسليم الامتحان.")+(s.graded?" وده نتيجتك.":" درجتك هتظهر بعد ما المدرس يصحح الأسئلة المقالية.");render()}
+function tick(){const s=S.subs.find(x=>x.eid===TAKE&&!x.done),e=S.exams.find(x=>x.id===TAKE);if(!s||!e)return;const left=s.start+e.mins*60000-Date.now();
+if(left<=0)return finishExam("time");const t=$("tm");if(t)t.textContent=Math.floor(left/60000)+":"+String(Math.floor(left%60000/1000)).padStart(2,"0")}
+function sweep(){S.subs.forEach(s=>{if(!s.done){const e=S.exams.find(x=>x.id===s.eid);fin(s,e&&Date.now()>=s.start+e.mins*60000?"time":"left")}})}
+const leave=()=>{if(TAKE)finishExam("left")};
+document.addEventListener("visibilitychange",()=>{if(document.hidden)leave()});
+addEventListener("blur",leave);
+addEventListener("pagehide",()=>{if(TAKE){collect();const s=S.subs.find(x=>x.eid===TAKE&&!x.done);if(s){fin(s,"left");save()}}});
+function setMark(sid,qid,v){const s=S.subs.find(x=>x.id===sid),q=S.exams.find(x=>x.id===s.eid).qs.find(x=>x.id===qid),n=Math.max(0,Math.min(q.max,Number(v)||0));s.marks[qid]=n;const i=$(`mk${sid}_${qid}`);if(i)i.value=n;save()}
+function setNote(sid,v){S.subs.find(x=>x.id===sid).note=v.trim();save()}
+function approve(sid){const s=S.subs.find(x=>x.id===sid),e=S.exams.find(x=>x.id===s.eid),st=S.users.find(x=>x.id===s.sid),[t,m]=sc(e,s);s.graded=true;FL=`تم اعتماد درجة ${st.name}: ${t} / ${m}، وظهرت له وفي التقارير.`;render()}
+function copyMsg(sid,b){try{navigator.clipboard.writeText(buildMsg(rep(S.subs.find(x=>x.id===sid))));b.textContent="تم النسخ ✓"}catch(e){b.textContent="النسخ مش متاح هنا"}}
+function render(){save();let p=location.hash.slice(1)||"home";const m=me();
+if(!m&&p!=="home"&&p!=="login")p="login";
+if(m){if(p==="login")p="home";if(p!=="home"&&!PG[m.role].includes(p))p=PG[m.role][0]}
+if(m&&m.role==="student"&&TAKE)p="me";
+const fl=FL?`<div class="card flash" role="status">${esc(FL)}</div>`:"";FL="";
+$("app").innerHTML=(p==="home"||p==="login")?fl+V[p](m):(TAKE?"":nav(p,m))+fl+V[p](m)+(TAKE?"":note);
+clearInterval(TM);if(TAKE){TM=setInterval(tick,1000);tick()}}
+addEventListener("hashchange",()=>{PEND=0;if(TAKE)return leave();render();window.scrollTo(0,0)});sweep();render();
+</script>
+</body>
+</html>
